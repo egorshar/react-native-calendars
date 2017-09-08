@@ -21,15 +21,20 @@ export default class CalendarsScreen extends Component {
           onDayPress={this.onDayPress}
           style={styles.calendar}
           hideExtraDays
-          selected={[this.state.selected]}
+          markedDates={{[this.state.selected]: {selected: true}}}
         />
         <Text style={styles.text}>Calendar with marked dates and hidden arrows</Text>
         <Calendar
           style={styles.calendar}
           current={'2012-05-16'}
           minDate={'2012-05-10'}
-          selected={['2012-05-24']}
-          markedDates={{'2012-05-24': [true], '2012-05-25': [true]}}
+          maxDate={'2012-05-29'}
+          firstDay={1}
+          markedDates={{
+            '2012-05-24': {selected: true, marked: true},
+            '2012-05-25': {marked: true},
+            '2012-05-26': {disabled: true}
+          }}
           hideArrows={true}
         />
         <Text style={styles.text}>Calendar with marked dates and spinner</Text>
@@ -50,8 +55,14 @@ export default class CalendarsScreen extends Component {
             arrowColor: 'white'
           }}
           markedDates={{
+            '2012-05-08': [{textColor: '#666'}],
+            '2012-05-09': [{textColor: '#666'}],
+            '2012-05-14': [{startingDay: true, color: 'blue'}, {endingDay: true, color: 'blue'}],
+            '2012-05-21': [{startingDay: true, color: 'blue'}],
+            '2012-05-22': [{endingDay: true, color: 'gray'}],
             '2012-05-24': [{startingDay: true, color: 'gray'}],
-            '2012-05-25': [{endingDay: true, color: 'gray'}]}}
+            '2012-05-25': [{color: 'gray'}],
+            '2012-05-26': [{endingDay: true, color: 'gray'}]}}
           hideArrows={false}
         />
       </ScrollView>
@@ -60,7 +71,7 @@ export default class CalendarsScreen extends Component {
 
   onDayPress(day) {
     this.setState({
-      selected: day
+      selected: day.dateString
     });
   }
 }

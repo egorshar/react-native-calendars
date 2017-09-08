@@ -5,8 +5,9 @@ import {
   Platform,
   Text
 } from 'react-native';
-
+import PropTypes from 'prop-types';
 import XDate from 'xdate';
+
 import {xdateToData, parseDate} from '../interface';
 import styleConstructor from './style';
 import dateutils from '../dateutils';
@@ -14,6 +15,19 @@ import Calendar from '../calendar';
 
 const calendarHeight = 360;
 class CalendarList extends Component {
+  static propTypes = {
+    ...Calendar.propTypes,
+
+    // Max amount of months allowed to scroll to the past. Default = 50
+    pastScrollRange: PropTypes.number,
+
+    // Max amount of months allowed to scroll to the future. Default = 50
+    futureScrollRange: PropTypes.number,
+
+    // Enable or disable scrolling of calendar list
+    scrollEnabled: PropTypes.bool,
+  };
+
   constructor(props) {
     super(props);
     this.pastScrollRange = props.pastScrollRange === undefined ? 50 : props.pastScrollRange;
@@ -65,6 +79,9 @@ class CalendarList extends Component {
           onDayPress={this.props.onDayPress}
           displayLoadingIndicator={this.props.displayLoadingIndicator}
           minDate={this.props.minDate}
+          maxDate={this.props.maxDate}
+          firstDay={this.props.firstDay}
+          monthFormat={this.props.monthFormat}
         />);
     } else {
       const text = row.toString();
@@ -81,7 +98,7 @@ class CalendarList extends Component {
     const diffMonths = Math.round(this.state.openDate.clone().setDate(1).diffMonths(day.clone().setDate(1)));
     let scrollAmount = (calendarHeight * this.pastScrollRange) + (diffMonths * calendarHeight) + (offset || 0);
     let week = 0;
-    const days = dateutils.page(day);
+    const days = dateutils.page(day, this.props.firstDay);
     for (let i = 0; i < days.length; i++) {
       week = Math.floor(i / 7);
       if (dateutils.sameDate(days[i], day)) {
@@ -110,8 +127,10 @@ class CalendarList extends Component {
   }
 
   componentWillReceiveProps(props) {
-    if (props.current && this.props.current && props.current.getTime() !== this.props.current.getTime()) {
-      this.scrollToMonth(props.current);
+    const current = parseDate(this.props.current);
+    const nextCurrent = parseDate(props.current);
+    if (nextCurrent && current && nextCurrent.getTime() !== current.getTime()) {
+      this.scrollToMonth(nextCurrent);
     }
 
     const rowclone = this.state.rows;
@@ -227,7 +246,7 @@ class CalendarList extends Component {
         ref={(c) => this.listView = c}
         onScroll={this.onScroll.bind(this)}
         //scrollEventThrottle={1000} // does not work on droid, need to recheck on newer react verions
-        style={this.props.style}
+        style={[this.style.container, this.props.style]}
         initialListSize={this.pastScrollRange * this.futureScrollRange + 1}
         dataSource={this.state.dataSource}
         scrollRenderAheadDistance={calendarHeight}

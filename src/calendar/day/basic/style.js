@@ -1,5 +1,5 @@
 import {StyleSheet, Platform} from 'react-native';
-import * as defaultStyle from '../../style';
+import * as defaultStyle from '../../../style';
 
 export default function styleConstructor(theme={}) {
   const appStyle = {...defaultStyle, ...theme};
@@ -11,7 +11,8 @@ export default function styleConstructor(theme={}) {
     },
     text: {
       marginTop: 4,
-      fontSize: 16,
+      fontSize: appStyle.textDayFontSize,
+      fontFamily: appStyle.textDayFontFamily,
       fontWeight: '300',
       color: appStyle.dayTextColor,
       backgroundColor: 'rgba(255, 255, 255, 0)'

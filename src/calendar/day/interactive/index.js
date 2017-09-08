@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 //import _ from 'lodash';
 import {
   TouchableWithoutFeedback,
@@ -6,20 +7,29 @@ import {
   View
 } from 'react-native';
 
-import * as defaultStyle from '../style';
+import * as defaultStyle from '../../../style';
 import styleConstructor from './style';
 
 class Day extends Component {
+  static propTypes = {
+    // TODO: selected + disabled props should be removed
+    state: PropTypes.oneOf(['selected', 'disabled', 'today', '']),
+
+    // Specify theme properties to override specific styles for calendar parts. Default = {}
+    theme: PropTypes.object,
+    marked: PropTypes.any,
+
+    onPress: PropTypes.func,
+
+    markingExists: PropTypes.bool,
+  };
+
   constructor(props) {
     super(props);
     this.theme = {...defaultStyle, ...(props.theme || {})};
     this.style = styleConstructor(props.theme);
     this.markingStyle = this.getDrawingStyle(props.marked);
   }
-
-  static propTypes = {
-    state: React.PropTypes.oneOf(['selected', 'disabled', 'today', ''])
-  };
 
   shouldComponentUpdate(nextProps) {
     const newMarkingStyle = this.getDrawingStyle(nextProps.marked);
@@ -42,6 +52,7 @@ class Day extends Component {
       return {};
     }
     return marking.reduce((prev, next) => {
+      prev.textStyle = {};
       if (next.quickAction) {
         if (next.first || next.last) {
           prev.containerStyle = this.style.firstQuickAction;
@@ -79,6 +90,9 @@ class Day extends Component {
         prev.day = {
           color
         };
+      }
+      if (next.textColor) {
+        prev.textStyle.color = next.textColor;
       }
       return prev;
     }, {});
@@ -164,7 +178,7 @@ class Day extends Component {
         <View style={this.style.wrapper}>
           {fillers}
           <View style={containerStyle}>
-            <Text style={textStyle}>{this.props.children}</Text>
+            <Text style={textStyle}>{String(this.props.children)}</Text>
           </View>
         </View>
       </TouchableWithoutFeedback>

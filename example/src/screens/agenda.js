@@ -19,10 +19,12 @@ export default class AgendaScreen extends Component {
       <Agenda
         items={this.state.items}
         loadItemsForMonth={this.loadItems.bind(this)}
-        selected={'2012-05-16'}
+        selected={'2017-05-16'}
         renderItem={this.renderItem.bind(this)}
         renderEmptyDate={this.renderEmptyDate.bind(this)}
         rowHasChanged={this.rowHasChanged.bind(this)}
+        // monthFormat={'yyyy'}
+        // theme={{calendarBackground: 'red', agendaKnobColor: 'green'}}
         //renderDay={(day, item) => (<Text>{day ? day.day: 'item'}</Text>)}
       />
     );
@@ -32,13 +34,13 @@ export default class AgendaScreen extends Component {
     setTimeout(() => {
       for (let i = -15; i < 85; i++) {
         const time = day.timestamp + i * 24 * 60 * 60 * 1000;
-        const strtime = this.timeToString(time);
-        if (!this.state.items[strtime]) {
-          this.state.items[strtime] = [];
+        const strTime = this.timeToString(time);
+        if (!this.state.items[strTime]) {
+          this.state.items[strTime] = [];
           const numItems = Math.floor(Math.random() * 5);
           for (let j = 0; j < numItems; j++) {
-            this.state.items[strtime].push({
-              name: 'Item for ' + strtime,
+            this.state.items[strTime].push({
+              name: 'Item for ' + strTime,
               height: Math.max(50, Math.floor(Math.random() * 150))
             });
           }
@@ -83,7 +85,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
     marginRight: 10,
-    marginTop: 5
+    marginTop: 17
   },
   emptyDate: {
     height: 15,
